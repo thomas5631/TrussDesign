@@ -17,14 +17,19 @@ public:
 	}
 
 
-
+	// The multiplication function accepts any pair of vectors and returns the product
+	// An example input and output is as follows:
+	//			INPUT						           OUTPUT
+	//     [ 1    2    3 ]       [ 7    8 ]         [ 58    64 ]
+	//                       x   [ 9    10]    =
+	//     [ 4    5    6 ]       [ 11   12]         [ 139  154 ]
 	template<typename T>
 	static std::vector<std::vector<T>> vectorMultiply(const std::vector<std::vector<T> > &A, const std::vector<std::vector<T> > &B)
 	{
 		if (A[0].size() != B.size())
-			throw (std::runtime_error("Matrix multiplication not possible given that dimensions of matrix A = " + std::to_string(A.size()) +
+			throw std::runtime_error("Matrix multiplication not possible given that dimensions of matrix A = " + std::to_string(A.size()) +
 				" x " + std::to_string(A[0].size()) + " and the dimensions of matrix B = " + std::to_string(B.size()) + " x " +
-				std::to_string(B[0].size())));
+				std::to_string(B[0].size()));
 
 		std::vector<std::vector<T>> C(A.size(), std::vector<T>(B[0].size()));
 		for (unsigned i = 0; i < A.size(); ++i)
@@ -65,6 +70,10 @@ public:
 	template<typename T>
 	static std::vector<std::vector<T>> pivotise(std::vector<std::vector<T> > A)
 	{
+		if (A[0].size() != A.size())                           //checks that the input matrix is square, if not, throws an error. -- TO BE MOVED TO LU DECOMPOSER ONCE IT WORKS
+			throw std::runtime_error("Matrix pivoting not possible for non square matrix. Dimensions of this matrix are: "
+				+ std::to_string(A.size()) + " x " + std::to_string(A[0].size()));
+
 		std::vector<unsigned> posHist;                         //this vector will hold the row position history of maxima in A_T
 
 		for (unsigned k = 0; k < A.size(); k++)
@@ -124,6 +133,7 @@ public:
 		}
 	}
 
+	// Outputs a matrix in readable form.
 	template<typename T>
 	static void output(std::vector<std::vector<T> > &myVec)
 	{

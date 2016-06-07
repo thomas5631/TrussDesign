@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include <string>
 
 class Solver
 {
@@ -15,9 +16,16 @@ public:
 	{
 	}
 
+
+
 	template<typename T>
 	static std::vector<std::vector<T>> vectorMultiply(const std::vector<std::vector<T> > &A, const std::vector<std::vector<T> > &B)
 	{
+		if (A[0].size() != B.size())
+			throw (std::runtime_error("Matrix multiplication not possible given that dimensions of matrix A = " + std::to_string(A.size()) +
+				" x " + std::to_string(A[0].size()) + " and the dimensions of matrix B = " + std::to_string(B.size()) + " x " +
+				std::to_string(B[0].size())));
+
 		std::vector<std::vector<T>> C(A.size(), std::vector<T>(B[0].size()));
 		for (unsigned i = 0; i < A.size(); ++i)
 			for (unsigned j = 0; j < B[0].size(); ++j)

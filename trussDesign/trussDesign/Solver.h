@@ -15,6 +15,18 @@ public:
 	{
 	}
 
+	template<typename T>
+	static std::vector<std::vector<T>> transpose (const std::vector<std::vector<T> > &A)
+	{
+			std::vector<std::vector<T>> A_T(A[0].size(), std::vector<T>(A.size()));
+			for (unsigned i = 0; i < A.size(); ++i)
+				for (unsigned j = 0; j < A[0].size(); ++j)
+					A_T[j][i] = A[i][j];
+
+			return A_T;
+	}
+
+
 
 	template<typename T>
 	static void pivotise(std::vector<std::vector<T> > &A)
@@ -24,19 +36,19 @@ public:
 
 		for (unsigned k = 0; k < A.size(); k++)
 		{
-			std::vector<std::vector<T>> A_T(A[0].size(), std::vector<T>(A.size()));
-			for (unsigned i = 0; i < A.size(); ++i)
-				for (unsigned j = 0; j < A[0].size(); ++j)
-					A_T[j][i] = A[i][j];
+			std::vector<std::vector<T>> A_T = transpose(A);
+
 ///////////////////////////////////////////The issue lies between these lines////////////////////////////////////////////////////////////
 ///////////////////////////////////////////The issue lies between these lines////////////////////////////////////////////////////////////
-			// rows which have previously existed are being deleted, but i am not searching within the new bounds
-			std::sort(posHist.begin(), posHist.end(), std::greater<T>());
-			for (unsigned q = 0; q > posHist.size(); q++)
+			for (unsigned q = 0; q < posHist.size(); q++)
 			{
-				auto index = posHist[q];
-				A_T.erase(A_T.begin() + q);
+				for (unsigned i = 0; i < A_T.size(); i++)
+					A_T[i][posHist[q]] = 0.0;
+				std::cout << std::endl  << "The position which should be eliminated is: " << posHist[q] << std::endl;
 			}
+
+			std::cout << std::endl << "A* in this step is:" << std::endl;
+			output(transpose(A_T));
 
 			unsigned pos;
 			if (k == A.size() - 1)
@@ -45,7 +57,7 @@ public:
 				pos = std::distance(A_T[k].begin(), std::max_element(A_T[k].begin(), A_T[k].end(),
 					[](T a, T b) {return (abs(a) < abs(b)); }));
 			posHist.push_back(pos);
-			std::cout << "Position of max in column " << k << " = " << pos << std::endl;
+			std::cout << std::endl << "Position of max in column " << k << " = " << pos << std::endl;
 			auto r = A[pos][k];
 
 			for (unsigned i = 0; i < A.size(); i++)
@@ -75,7 +87,7 @@ public:
 
 		for (auto p : posHist)
 		{
-			std::cout << p << "\t";
+			std::cout << std::endl << p << "\t";
 		}
 
 
@@ -144,7 +156,7 @@ public:
 		{
 			for (auto val : row)
 			{
-				std::cout << val << ",\t";
+				std::cout << std::setw(10) <<val;
 			}
 			std::cout << "\n";
 		}

@@ -27,49 +27,38 @@ public:
 	}
 
 
-
+	// The pivotise function accepts any square vector of vectors (non sparse) and returns the pivot matrix P
+	// An example input and output is as follows:
+	//			INPUT						OUTPUT
+	//     [ 1    3    5 ]             [ 0    1    0 ]
+	//     [ 2    4    7 ]             [ 1    0    0 ]
+	//     [ 1    1    0 ]             [ 0    0    1 ]
+	// This function is used to ensure stability in LU decomposition operations.
 	template<typename T>
 	static void pivotise(std::vector<std::vector<T> > &A)
 	{
-		//initializing row and column max pos. vectors
-		std::vector<unsigned> posHist;
+		std::vector<unsigned> posHist;                         //this vector will hold the row position history of maxima in A_T
 
 		for (unsigned k = 0; k < A.size(); k++)
 		{
-			std::vector<std::vector<T>> A_T = transpose(A);
+			std::vector<std::vector<T>> A_T = transpose(A);    //transpose the input vector for easier manipulation (pivoting is column dominant)
 
-///////////////////////////////////////////The issue lies between these lines////////////////////////////////////////////////////////////
-///////////////////////////////////////////The issue lies between these lines////////////////////////////////////////////////////////////
-			for (unsigned q = 0; q < posHist.size(); q++)
-			{
+			for (unsigned q = 0; q < posHist.size(); q++)      //this loop iterates over the position history of maxima, setting all Transpose 
+			{												   //row entries to zero if the row has been previously picked
 				for (unsigned i = 0; i < A_T.size(); i++)
 					A_T[i][posHist[q]] = 0.0;
-				std::cout << std::endl  << "The position which should be eliminated is: " << posHist[q] << std::endl;
 			}
 
-			std::cout << std::endl << "A* in this step is:" << std::endl;
-			output(transpose(A_T));
+			unsigned pos = std::distance(A_T[k].begin(), std::max_element(A_T[k].begin(), A_T[k].end(),    //searches each column of the Transpose
+					[](T a, T b) {return (abs(a) < abs(b)); }));                                           //to find the position of the maximum
+			posHist.push_back(pos);                            //appends the result to the position history vector
 
-			unsigned pos;
-			if (k == A.size() - 1)
-				pos = A.size() - 1;
-			else
-				pos = std::distance(A_T[k].begin(), std::max_element(A_T[k].begin(), A_T[k].end(),
-					[](T a, T b) {return (abs(a) < abs(b)); }));
-			posHist.push_back(pos);
-			std::cout << std::endl << "Position of max in column " << k << " = " << pos << std::endl;
-			auto r = A[pos][k];
+			for (unsigned i = 0; i < A.size(); i++)            //normalizes the maximal row entries by dividing every entry by the maximum
+				A[pos][i] = A[pos][i] / A_T[k][pos];
 
-			for (unsigned i = 0; i < A.size(); i++)
-				A[pos][i] = A[pos][i] / r;
-///////////////////////////////////////////The issue lies between these lines////////////////////////////////////////////////////////////
-///////////////////////////////////////////The issue lies between these lines////////////////////////////////////////////////////////////
 
-			//output(A); //issue with 3x3
-
-			for (unsigned j = 0; j < A.size(); j++)
-			{
-
+			for (unsigned j = 0; j < A.size(); j++)            //this loop subtracts the maximal row * the corresponding entry from each given row 
+			{												   //(now unity in the max position) from each row in sequence.
 				if (j != pos)
 				{
 					auto mfact = A[j][k];
@@ -79,38 +68,7 @@ public:
 					}
 				}
 			}
-
-
-			std::cout << std::endl;
-			output(A);
 		}
-
-		for (auto p : posHist)
-		{
-			std::cout << std::endl << p << "\t";
-		}
-
-
-		//auto r = std::max_element(A_T[0].begin(), A_T[0].end());
-		//std::cout<< "Max for this loop: " << r[0] << std::endl;
-
-		//for (auto i = 0; i < A[0].size(); ++i)
-		//	A[0][i] = A[0][i] / r[0];
-
-		//std::cout << std::endl;
-		//output(A);
-
-		//for (unsigned j = 1; j < A.size(); j++)
-		//{
-		//	auto mfact = A[j][0];
-		//	for (auto i = 0; i < A[0].size(); ++i)
-		//	{
-		//		A[j][i] -= A[0][i] * mfact;
-		//	}
-		//}
-		//	std::cout << std::endl;
-		//	output(A);
-
 	}
 
 	template<typename T>

@@ -63,7 +63,20 @@ int main()
 
 	//};
 
+	std::vector<std::vector<double> > A = {
+		{ 1, 2, 3 },
+		{ 4, 5, 6 }
+	};
 
+	std::vector<std::vector<double> > B = {
+		{ 7, 8 },
+		{ 9, 10 },
+		{ 11, 12 }
+	};
+
+	std::cout << "checking multiplication order: " << std::endl;
+	auto C = Solver::vectorMultiply(A, B);
+	Solver::output(C);
 
 	std::cout << std::endl << "The a matrix: " << std::endl << std::endl;
 	Solver::output(myVec);
@@ -73,8 +86,10 @@ int main()
 	std::cout << std::endl << "The pivot matrix: " << std::endl << std::endl;
 	Solver::output(pivot);
 
-	std::cout << std::endl << "The a matrix: " << std::endl << std::endl;
-	Solver::output(myVec);
+	auto rearr = Solver::vectorMultiply(pivot, myVec);
+
+	std::cout << std::endl << "The rearranged matrix: " << std::endl << std::endl;
+	Solver::output(rearr);
 
 	//std::vector<std::vector<double> > u, l;
 

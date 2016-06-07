@@ -15,6 +15,19 @@ public:
 	{
 	}
 
+	template<typename T>
+	static std::vector<std::vector<T>> vectorMultiply(const std::vector<std::vector<T> > &A, const std::vector<std::vector<T> > &B)
+	{
+		std::vector<std::vector<T>> C(A.size(), std::vector<T>(B[0].size()));
+		for (unsigned i = 0; i < A.size(); ++i)
+			for (unsigned j = 0; j < B[0].size(); ++j)
+				for (unsigned k = 0; k < B.size(); ++k)
+					C[i][j] += A[i][k] * B[k][j];
+
+		return C;
+	}
+
+
 	// The transpose function accepts any square vector of vectors and returns the transpose matrix A_T
 	// An example input and output is as follows:
 	//			INPUT						OUTPUT
@@ -80,36 +93,24 @@ public:
 	}
 
 	template<typename T>
-	static void lu(std::vector<std::vector<T> > &a, std::vector<std::vector<double> > &l, std::vector<std::vector<double> > &u)
+	static void luDecomposer(std::vector<std::vector<T> > &A, std::vector<std::vector<double> > &lower, std::vector<std::vector<double> > &upper)
 	{
-		l = {
-			{0, 0, 0, 0},
-			{0, 0, 0, 0},
-			{0, 0, 0, 0},
-			{0, 0, 0, 0}
-		};
+		lower(A[0].size(), std::vector<T>(A.size()));
+		upper(A[0].size(), std::vector<T>(A.size()));
 
-		u = {
-			{ 0, 0, 0, 0 },
-			{ 0, 0, 0, 0 },
-			{ 0, 0, 0, 0 },
-			{ 0, 0, 0, 0 }
-		};
-
-		for (unsigned i = 0; i < a.size(); i++)
+		for (unsigned i = 0; i < A.size(); i++)
 		{
-
-			for (unsigned j = 0; j < a[0].size(); j++)
+			for (unsigned j = 0; j < A[i].size(); j++)
 			{
-				u[i][j] = (a[i][j]);
+				upper[i][j] = (A[i][j]);
 				for (unsigned k = 0; k < i; k++)
 				{
-					u[i][j] -= u[k][j] * l[i][k];
+					upper[i][j] -= upper[k][j] * lower[i][k];
 				}
-				l[i][j] = (1 / u[j][j]) * a[i][j];
+				lower[i][j] = (1 / upper[j][j]) * A[i][j];
 				for (unsigned k = 0; k < j; k++)
 				{
-					l[i][j] -= (1 / u[j][j]) * u[k][j] * l[i][k];
+					lower[i][j] -= (1 / upper[j][j]) * upper[k][j] * lower[i][k];
 				}
 			}
 		}

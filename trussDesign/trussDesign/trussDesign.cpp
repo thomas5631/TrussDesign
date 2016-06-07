@@ -49,30 +49,32 @@ int main()
 		{0, -cos(PI/3), -1, 0, 0, 0}
 	};*/
 
-	//std::vector<std::vector<double> > myVec = {
-	//	{11, 9, 24, 2},
-	//	{1, 5, 2, 6},
-	//	{3, 17, 18, 1},
-	//	{2, 5, 7, 1}
-	//};
-
 	std::vector<std::vector<double> > myVec = {
-		{ 1, 3, 5 },
-		{ 2, 4, 7 },
-		{ 1, 1, 0 }
-
+		{11, 9, 24, 2},
+		{1, 5, 2, 6},
+		{3, 17, 18, 1},
+		{2, 5, 7, 1}
 	};
+
+	//std::vector<std::vector<double> > myVec = {
+	//	{ 1, 3, 5 },
+	//	{ 2, 4, 7 },
+	//	{ 1, 1, 0 }
+
+	//};
 
 
 
 	std::cout << std::endl << "The a matrix: " << std::endl << std::endl;
 	Solver::output(myVec);
 
-	Solver::pivotise(myVec);
+	auto pivot = Solver::pivotise(myVec);
 	
 	std::cout << std::endl << "The pivot matrix: " << std::endl << std::endl;
-	Solver::output(myVec);
+	Solver::output(pivot);
 
+	std::cout << std::endl << "The a matrix: " << std::endl << std::endl;
+	Solver::output(myVec);
 
 	//std::vector<std::vector<double> > u, l;
 

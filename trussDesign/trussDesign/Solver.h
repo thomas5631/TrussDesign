@@ -15,13 +15,20 @@ public:
 	{
 	}
 
+	// The transpose function accepts any square vector of vectors and returns the transpose matrix A_T
+	// An example input and output is as follows:
+	//			INPUT						OUTPUT
+	//     [ 1    3    5 ]             [ 1    2    1 ]
+	//     [ 2    4    7 ]             [ 3    4    1 ]
+	//     [ 1    1    0 ]             [ 5    7    0 ]
+	// This function is used to ensure stability in LU decomposition operations.
 	template<typename T>
-	static std::vector<std::vector<T>> transpose (const std::vector<std::vector<T> > &A)
+	static std::vector<std::vector<T>> transpose(const std::vector<std::vector<T> > &A)
 	{
 			std::vector<std::vector<T>> A_T(A[0].size(), std::vector<T>(A.size()));
-			for (unsigned i = 0; i < A.size(); ++i)
-				for (unsigned j = 0; j < A[0].size(); ++j)
-					A_T[j][i] = A[i][j];
+			for (unsigned i = 0; i < A.size(); ++i)            //this loop iterates over the entire input matrix and
+				for (unsigned j = 0; j < A[0].size(); ++j)     //populates the transpose matrix with a version of the 
+					A_T[j][i] = A[i][j];                       //input matrix which has the rows and columns switched
 
 			return A_T;
 	}
@@ -35,7 +42,7 @@ public:
 	//     [ 1    1    0 ]             [ 0    0    1 ]
 	// This function is used to ensure stability in LU decomposition operations.
 	template<typename T>
-	static void pivotise(std::vector<std::vector<T> > &A)
+	static std::vector<std::vector<T>> pivotise(std::vector<std::vector<T> > A)
 	{
 		std::vector<unsigned> posHist;                         //this vector will hold the row position history of maxima in A_T
 
@@ -69,6 +76,7 @@ public:
 				}
 			}
 		}
+		return A;
 	}
 
 	template<typename T>

@@ -56,6 +56,18 @@ int main()
 	std::cout << "input matrix: " << std::endl;
 	Solver::output(myVec);
 
+	std::vector<std::vector<double> > lower, upper;
+
+	Solver::luDecomposer(myVec, lower, upper);
+	std::cout << std::endl << "The l matrix: " << std::endl << std::endl;
+	Solver::output(lower);
+	std::cout << std::endl << "The u matrix: " << std::endl << std::endl;
+	Solver::output(upper);
+
+	//auto begin = Solver::vectorMultiply(lower, upper);
+	//std::cout << std::endl << "The permuted matrix: " << std::endl << std::endl;
+	//Solver::output(begin);
+
 	auto result = Solver::solveGaussian(myVec, forces);
 
 	for (auto r: result)

@@ -6,17 +6,6 @@
 
 class Solver
 {
-public:
-
-	Solver()
-	{
-	}
-
-	virtual ~Solver()
-	{
-	}
-
-
 	// The multiplication function accepts any pair of vectors and returns the product
 	// An example input and output is as follows:
 	//			INPUT						           OUTPUT
@@ -125,7 +114,7 @@ public:
 	//    [ 2    4    7 ]           [ 0.50000  1.00000  0.00000 ]   +   [ 0.00000  1.00000  1.50000 ]
 	//    [ 1    1    0 ]           [ 0.50000 -1.00000  1.00000 ]       [ 0.00000  0.00000 -2.00000 ]
 	template<typename T>
-	static void luDecomposer(const std::vector<std::vector<T> > &lhs, const std::vector<T> &rhs, std::vector<std::vector<double> > &lower, 
+	static void luDecomposer(const std::vector<std::vector<T> > &lhs, const std::vector<T> &rhs, std::vector<std::vector<double> > &lower,
 		std::vector<std::vector<double> > &upper, std::vector<T> &B)
 	{
 		if (lhs[0].size() != lhs.size())                   //checks that the lhs matrix is square, if not, throws an error.
@@ -158,6 +147,7 @@ public:
 		upper = u;
 		lower = l;
 	}
+public:
 
 	template<typename T>
 	static std::vector<T> solveGaussian(const std::vector<std::vector<T>> &A, const std::vector<T> &B)

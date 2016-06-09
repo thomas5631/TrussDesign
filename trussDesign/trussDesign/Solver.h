@@ -40,6 +40,19 @@ public:
 		return C;
 	}
 
+	template<typename T>
+	static std::vector<T> vectorMultiply(const std::vector<std::vector<T> > &A, const std::vector<T> &B)
+	{
+		if (A[0].size() != B.size())
+			throw std::runtime_error("Matrix multiplication not possible given that dimensions of matrix A = " + std::to_string(A.size()) +
+				" x " + std::to_string(A[0].size()) + " and the dimensions of matrix B = " + std::to_string(B.size()) + " x " + "1");
+
+		std::vector<T> C(B.size());
+		for (unsigned i = 0; i < B.size(); ++i)
+			for (unsigned j = 0; j < B.size(); ++j)
+				C[i] += A[i][j] * B[j];
+		return C;
+	}
 
 	// The transpose function accepts any square vector of vectors and returns the transpose matrix A_T
 	// An example input and output is as follows:
@@ -112,13 +125,18 @@ public:
 	//    [ 2    4    7 ]           [ 0.50000  1.00000  0.00000 ]   +   [ 0.00000  1.00000  1.50000 ]
 	//    [ 1    1    0 ]           [ 0.50000 -1.00000  1.00000 ]       [ 0.00000  0.00000 -2.00000 ]
 	template<typename T>
-	static void luDecomposer(const std::vector<std::vector<T> > &input, std::vector<std::vector<double> > &lower, std::vector<std::vector<double> > &upper)
+	static void luDecomposer(const std::vector<std::vector<T> > &lhs, const std::vector<T> &rhs, std::vector<std::vector<double> > &lower, 
+		std::vector<std::vector<double> > &upper, std::vector<T> &B)
 	{
-		if (input[0].size() != input.size())                   //checks that the input matrix is square, if not, throws an error.
+		if (lhs[0].size() != lhs.size())                   //checks that the lhs matrix is square, if not, throws an error.
 			throw std::runtime_error("Matrix pivoting not possible for non square matrix. Dimensions of this matrix are: "
-				+ std::to_string(input.size()) + " x " + std::to_string(input[0].size()));
+				+ std::to_string(lhs.size()) + " x " + std::to_string(lhs[0].size()));
 
-		auto A = vectorMultiply(pivotise(input), input);
+		auto P = pivotise(lhs);
+		B = vectorMultiply(P, rhs);
+
+		auto A = vectorMultiply(P, lhs);
+
 		std::vector<std::vector<T>> l(A.size(), std::vector<T>(A.size()));    //this temporary matrix holds the lower triangle before return
 		std::vector<std::vector<T>> u(A.size(), std::vector<T>(A.size()));    //this temporary matrix holds the upper triangle before return
 
@@ -145,14 +163,8 @@ public:
 	static std::vector<T> solveGaussian(const std::vector<std::vector<T>> &A, const std::vector<T> &B)
 	{
 		std::vector<std::vector<double> > l, u;
-		luDecomposer(A, l, u);
-
-		auto P = pivotise(A);
-
-		std::vector<T> b(B.size());                   //would be better to write this as an overload to vectorCalc function
-		for (unsigned i = 0; i < B.size(); ++i)       //move this to LUdecompose to minimize recalculation of P?
-			for (unsigned j = 0; j < B.size(); ++j)
-				b[i] += P[i][j] * B[j];
+		std::vector<double> b;
+		luDecomposer(A, B, l, u, b);
 
 		std::vector<T> z(A.size());       //this temporary matrix holds the result of l*z = b
 		std::vector<T> x(A.size());       //this temporary matrix holds the result of u*x = z
@@ -188,6 +200,14 @@ public:
 				std::cout << std::setw(12) << val;
 			}
 			std::cout << "\n";
+		}
+	}
+
+	static void output(std::vector<double> &myVec)
+	{
+		for (auto value : myVec)
+		{
+			std::cout << std::setw(12) << value << std::endl;
 		}
 	}
 };

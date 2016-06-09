@@ -141,6 +141,43 @@ public:
 		lower = l;
 	}
 
+	template<typename T>
+	static std::vector<T> solveGaussian(const std::vector<std::vector<T>> &A, const std::vector<T> &B)
+	{
+		std::vector<std::vector<double> > l, u;
+		luDecomposer(A, l, u);
+
+		std::cout << std::endl << "l: " << std::endl;
+		output(l);
+		std::cout << std::endl << "u: " << std::endl;
+		output(u);
+
+		std::vector<T> z(A.size());       //this temporary matrix holds the result of l*z = B
+		std::vector<T> x(A.size());       //this temporary matrix holds the result of u*x = z
+
+		for (unsigned i = 0; i < l.size(); i++)
+		{
+			auto temp = 0.0;
+			for (unsigned j = 0; j < i; j++)
+				temp += l[i][j] * z[j];
+			z[i] = (B[i] - temp) / l[i][i];
+		}
+
+		for (auto num : z)
+			std::cout << num << std::endl; //have checked z, and found it to be correct
+
+		for (auto i = u.size(); i > 0; i--)
+		{
+			auto temp = 0.0;
+			for (auto j = u.size(); j > i; j--)
+				temp += u[i][j] * x[j];
+			x[i] = (z[i] - temp) / u[i][i]; //output x is not correct
+		}
+
+		return x;
+	}
+
+
 	// Outputs a matrix in readable form.
 	template<typename T>
 	static void output(std::vector<std::vector<T> > &myVec)

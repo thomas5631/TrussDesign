@@ -40,21 +40,36 @@ int main()
 	Element elementB(nodeR, node0);
 	Element elementC(nodeP, nodeR);
 
-	/*double a[6][6] = {
+	std::vector<std::vector<double> > myVec = {
 		{ -1, -sin(PI / 3), 0, 0, 0, 0 },
 		{ 0, cos(PI / 3), 0, 0, 0, 0 },
 		{1, 0, 0, 1, 0, 0},
 		{0, 0, 1, 0, -1, 0},
 		{0, sin(PI/3), 0, 0, 0, 1},
 		{0, -cos(PI/3), -1, 0, 0, 0}
-	};*/
-
-	std::vector<std::vector<double> > myVec = {
-		{11, 9, 24, 2},
-		{1, 5, 2, 6},
-		{3, 17, 18, 1},
-		{2, 5, 7, 1}
 	};
+
+	std::vector<double> forces = {
+		5.345, -9.258, 0, 0, 0, 0
+	};
+
+	std::cout << "input matrix: " << std::endl;
+	Solver::output(myVec);
+
+	auto result = Solver::solveGaussian(myVec, forces);
+
+	for (auto r: result)
+	{
+		std::cout << r << std::endl;
+	}
+
+
+	//std::vector<std::vector<double> > myVec = {
+	//	{11, 9, 24, 2},
+	//	{1, 5, 2, 6},
+	//	{3, 17, 18, 1},
+	//	{2, 5, 7, 1}
+	//};
 
 	//std::vector<std::vector<double> > myVec = {
 	//	{ 1, 3, 5 },
@@ -82,21 +97,21 @@ int main()
 	//auto X = Solver::pivotise(A);
 	//Solver::output(C);
 
-	std::cout << std::endl << "The a matrix: " << std::endl << std::endl;
-	Solver::output(myVec);
+	//std::cout << std::endl << "The a matrix: " << std::endl << std::endl;
+	//Solver::output(myVec);
 
-	std::vector<std::vector<double> > lower, upper;
+	//std::vector<std::vector<double> > lower, upper;
 
-	Solver::luDecomposer(myVec, lower, upper);
-	std::cout << std::endl << "The l matrix: " << std::endl << std::endl;
-	Solver::output(lower);
-	std::cout << std::endl << "The u matrix: " << std::endl << std::endl;
-	Solver::output(upper);
+	//Solver::luDecomposer(myVec, lower, upper);
+	//std::cout << std::endl << "The l matrix: " << std::endl << std::endl;
+	//Solver::output(lower);
+	//std::cout << std::endl << "The u matrix: " << std::endl << std::endl;
+	//Solver::output(upper);
 
-	auto pivot = Solver::pivotise(myVec);
-	
-	std::cout << std::endl << "The pivot matrix: " << std::endl << std::endl;
-	Solver::output(pivot);
+	//auto pivot = Solver::pivotise(myVec);
+	//
+	//std::cout << std::endl << "The pivot matrix: " << std::endl << std::endl;
+	//Solver::output(pivot);
 
 	/*auto rearr = Solver::vectorMultiply(pivot, myVec);
 

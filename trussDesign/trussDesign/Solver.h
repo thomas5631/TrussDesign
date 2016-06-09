@@ -51,12 +51,12 @@ public:
 	template<typename T>
 	static std::vector<std::vector<T>> transpose(const std::vector<std::vector<T> > &A)
 	{
-			std::vector<std::vector<T>> A_T(A[0].size(), std::vector<T>(A.size()));
-			for (unsigned i = 0; i < A.size(); ++i)            //this loop iterates over the entire input matrix and
-				for (unsigned j = 0; j < A[0].size(); ++j)     //populates the transpose matrix with a version of the 
-					A_T[j][i] = A[i][j];                       //input matrix which has the rows and columns switched
+		std::vector<std::vector<T>> A_T(A[0].size(), std::vector<T>(A.size()));
+		for (unsigned i = 0; i < A.size(); ++i)            //this loop iterates over the entire input matrix and
+			for (unsigned j = 0; j < A[0].size(); ++j)     //populates the transpose matrix with a version of the 
+				A_T[j][i] = A[i][j];                       //input matrix which has the rows and columns switched
 
-			return A_T;
+		return A_T;
 	}
 
 
@@ -70,10 +70,6 @@ public:
 	template<typename T>
 	static std::vector<std::vector<T>> pivotise(std::vector<std::vector<T> > A)
 	{
-		if (A[0].size() != A.size())                           //checks that the input matrix is square, if not, throws an error. -- TO BE MOVED TO LU DECOMPOSER ONCE IT WORKS
-			throw std::runtime_error("Matrix pivoting not possible for non square matrix. Dimensions of this matrix are: "
-				+ std::to_string(A.size()) + " x " + std::to_string(A[0].size()));
-
 		std::vector<unsigned> posHist;                         //this vector will hold the row position history of maxima in A_T
 
 		for (unsigned k = 0; k < A.size(); k++)
@@ -87,7 +83,7 @@ public:
 			}
 
 			unsigned pos = std::distance(A_T[k].begin(), std::max_element(A_T[k].begin(), A_T[k].end(),    //searches each column of the Transpose
-					[](T a, T b) {return (abs(a) < abs(b)); }));                                           //to find the position of the maximum
+				[](T a, T b) {return (abs(a) < abs(b)); }));                                           //to find the position of the maximum
 			posHist.push_back(pos);                            //appends the result to the position history vector
 
 			for (unsigned i = 0; i < A.size(); i++)            //normalizes the maximal row entries by dividing every entry by the maximum
@@ -99,7 +95,7 @@ public:
 				if (j != pos)
 				{
 					auto mfact = A[j][k];
-					for (auto i = 0; i < A[k].size(); ++i)
+					for (unsigned i = 0; i < A[k].size(); ++i)
 					{
 						A[j][i] -= A[pos][i] * mfact;
 					}
@@ -110,27 +106,33 @@ public:
 	}
 
 	template<typename T>
-	static void luDecomposer(std::vector<std::vector<T> > &A, std::vector<std::vector<double> > &lower, std::vector<std::vector<double> > &upper)
+	static void luDecomposer(const std::vector<std::vector<T> > &input, std::vector<std::vector<double> > &lower, std::vector<std::vector<double> > &upper)
 	{
-		lower(A[0].size(), std::vector<T>(A.size()));
-		upper(A[0].size(), std::vector<T>(A.size()));
+		if (input[0].size() != input.size())                   //checks that the input matrix is square, if not, throws an error.
+			throw std::runtime_error("Matrix pivoting not possible for non square matrix. Dimensions of this matrix are: "
+				+ std::to_string(input.size()) + " x " + std::to_string(input[0].size()));
 
-		for (unsigned i = 0; i < A.size(); i++)
-		{
-			for (unsigned j = 0; j < A[i].size(); j++)
-			{
-				upper[i][j] = (A[i][j]);
-				for (unsigned k = 0; k < i; k++)
-				{
-					upper[i][j] -= upper[k][j] * lower[i][k];
-				}
-				lower[i][j] = (1 / upper[j][j]) * A[i][j];
+		auto A = vectorMultiply(pivotise(input), input);
+		std::vector<std::vector<T>> l(A.size(), std::vector<T>(A.size()));
+		std::vector<std::vector<T>> u(A.size(), std::vector<T>(A.size()));
+
+		for (unsigned i = 0; i < A.size(); i++) {
+			l[i][i] = 1;
+			for (unsigned j = 0; j < i + 1; j++) {
+				T s1 = 0;
 				for (unsigned k = 0; k < j; k++)
-				{
-					lower[i][j] -= (1 / upper[j][j]) * upper[k][j] * lower[i][k];
-				}
+					s1 += u[k][i] * l[j][k];
+				u[j][i] = A[j][i] - s1;
+			}
+			for (auto j = i; j < A.size(); j++) {
+				T s2 = 0;
+				for (unsigned k = 0; k < i; k++)
+					s2 += u[k][i] * l[j][k];
+				l[j][i] = (A[j][i] - s2) / u[i][i];
 			}
 		}
+		upper = u;
+		lower = l;
 	}
 
 	// Outputs a matrix in readable form.
@@ -141,7 +143,7 @@ public:
 		{
 			for (auto val : row)
 			{
-				std::cout << std::setw(10) <<val;
+				std::cout << std::setw(12) << val;
 			}
 			std::cout << "\n";
 		}

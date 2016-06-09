@@ -105,6 +105,12 @@ public:
 		return A;
 	}
 
+	// The luDecomposer function accepts any (non sparse) square matrix, and returns a lower and upper decomposed matrix by reference.
+	// Example input and output as follows:
+	//         INPUT                                              OUTPUT
+	//    [ 1    3    5 ]           [ 1.00000  0.00000  0.00000 ]       [ 2.00000  4.00000  7.00000 ]
+	//    [ 2    4    7 ]           [ 0.50000  1.00000  0.00000 ]   +   [ 0.00000  1.00000  1.50000 ]
+	//    [ 1    1    0 ]           [ 0.50000 -1.00000  1.00000 ]       [ 0.00000  0.00000 -2.00000 ]
 	template<typename T>
 	static void luDecomposer(const std::vector<std::vector<T> > &input, std::vector<std::vector<double> > &lower, std::vector<std::vector<double> > &upper)
 	{
@@ -113,18 +119,18 @@ public:
 				+ std::to_string(input.size()) + " x " + std::to_string(input[0].size()));
 
 		auto A = vectorMultiply(pivotise(input), input);
-		std::vector<std::vector<T>> l(A.size(), std::vector<T>(A.size()));
-		std::vector<std::vector<T>> u(A.size(), std::vector<T>(A.size()));
+		std::vector<std::vector<T>> l(A.size(), std::vector<T>(A.size()));    //this temporary matrix holds the lower triangle before return
+		std::vector<std::vector<T>> u(A.size(), std::vector<T>(A.size()));    //this temporary matrix holds the upper triangle before return
 
 		for (unsigned i = 0; i < A.size(); i++) {
-			l[i][i] = 1;
-			for (unsigned j = 0; j < i + 1; j++) {
+			l[i][i] = 1;                                       //initializes the descending vertical of l to 1
+			for (unsigned j = 0; j < i + 1; j++) {             //this loop completes the calculation for the upper triangle
 				T s1 = 0;
 				for (unsigned k = 0; k < j; k++)
 					s1 += u[k][i] * l[j][k];
 				u[j][i] = A[j][i] - s1;
 			}
-			for (auto j = i; j < A.size(); j++) {
+			for (auto j = i; j < A.size(); j++) {              //this loop completes the calculation for the lower triangle
 				T s2 = 0;
 				for (unsigned k = 0; k < i; k++)
 					s2 += u[k][i] * l[j][k];

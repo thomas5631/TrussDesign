@@ -151,7 +151,12 @@ class Solver
 		lower = l;
 	}
 public:
-
+	// The solveGaussian function accepts any square coefficient matrix and corresponding resultant matrix to calculate the member matrix values
+	// For example:
+	//         INPUT            OUTPUT
+	// [ 2    1 ]     [ 4 ]     [ 1 ]
+	//             +         =
+	// [ 1    4 ]     [ 9 ]     [ 2 ]
 	static std::vector<double> solveGaussian(const std::vector<std::vector<double>> &A, const std::vector<double> &B)
 	{
 		std::vector<std::vector<double> > l, u;

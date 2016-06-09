@@ -40,17 +40,26 @@ int main()
 	Element elementB(nodeR, node0);
 	Element elementC(nodeP, nodeR);
 
+	//std::vector<std::vector<double> > myVec = {
+	//	{ -1, -sin(PI / 3), 0, 0, 0, 0 },
+	//	{ 0, cos(PI / 3), 0, 0, 0, 0 },
+	//	{1, 0, 0, 1, 0, 0},
+	//	{0, 0, 1, 0, -1, 0},
+	//	{0, sin(PI/3), 0, 0, 0, 1},
+	//	{0, -cos(PI/3), -1, 0, 0, 0}
+	//};
+
+	//std::vector<double> forces = {
+	//	5.345, -9.258, 0, 0, 0, 0
+	//};
+
 	std::vector<std::vector<double> > myVec = {
-		{ -1, -sin(PI / 3), 0, 0, 0, 0 },
-		{ 0, cos(PI / 3), 0, 0, 0, 0 },
-		{1, 0, 0, 1, 0, 0},
-		{0, 0, 1, 0, -1, 0},
-		{0, sin(PI/3), 0, 0, 0, 1},
-		{0, -cos(PI/3), -1, 0, 0, 0}
+		{2, 1},
+		{1, 4}
 	};
 
 	std::vector<double> forces = {
-		5.345, -9.258, 0, 0, 0, 0
+		4, 9
 	};
 
 	std::cout << std::endl << "input matrix: " << std::endl << std::endl;

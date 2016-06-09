@@ -118,8 +118,11 @@ class Solver
 		std::vector<std::vector<double> > &upper, std::vector<T> &B)
 	{
 		if (lhs[0].size() != lhs.size())                   //checks that the lhs matrix is square, if not, throws an error.
-			throw std::runtime_error("Matrix pivoting not possible for non square matrix. Dimensions of this matrix are: "
+			throw std::runtime_error("Solution not possible for non square matrix. Dimensions of this matrix are: "
 				+ std::to_string(lhs.size()) + " x " + std::to_string(lhs[0].size()));
+		if (lhs.size() != rhs.size())                      //checks that the solution matrix dimensions are appropriate for input
+			throw std::runtime_error("Solution not possible for non corresponding A and B matrix. Dimensions of this matrix A are: "
+				+ std::to_string(lhs.size()) + " x " + std::to_string(lhs[0].size()) + " Dimension of matrix B is: " + std::to_string(rhs.size()));
 
 		auto P = pivotise(lhs);
 		B = vectorMultiply(P, rhs);
@@ -149,15 +152,14 @@ class Solver
 	}
 public:
 
-	template<typename T>
-	static std::vector<T> solveGaussian(const std::vector<std::vector<T>> &A, const std::vector<T> &B)
+	static std::vector<double> solveGaussian(const std::vector<std::vector<double>> &A, const std::vector<double> &B)
 	{
 		std::vector<std::vector<double> > l, u;
 		std::vector<double> b;
 		luDecomposer(A, B, l, u, b);
 
-		std::vector<T> z(A.size());       //this temporary matrix holds the result of l*z = b
-		std::vector<T> x(A.size());       //this temporary matrix holds the result of u*x = z
+		std::vector<double> z(A.size());       //this temporary matrix holds the result of l*z = b
+		std::vector<double> x(A.size());       //this temporary matrix holds the result of u*x = z
 
 		for (unsigned i = 0; i < l.size(); i++)
 		{
@@ -180,8 +182,7 @@ public:
 
 
 	// Outputs a matrix in readable form.
-	template<typename T>
-	static void output(std::vector<std::vector<T> > &myVec)
+	static void output(std::vector<std::vector<double> > &myVec)
 	{
 		for (auto row : myVec)
 		{

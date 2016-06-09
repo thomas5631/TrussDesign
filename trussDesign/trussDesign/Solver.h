@@ -149,15 +149,10 @@ public:
 
 		auto P = pivotise(A);
 
-		std::vector<T> b(B.size());
-		for (unsigned i = 0; i < B.size(); ++i)
+		std::vector<T> b(B.size());                   //would be better to write this as an overload to vectorCalc function
+		for (unsigned i = 0; i < B.size(); ++i)       //move this to LUdecompose to minimize recalculation of P?
 			for (unsigned j = 0; j < B.size(); ++j)
 				b[i] += P[i][j] * B[j];
-
-		std::cout << std::endl << "l: " << std::endl;
-		output(l);
-		std::cout << std::endl << "u: " << std::endl;
-		output(u);
 
 		std::vector<T> z(A.size());       //this temporary matrix holds the result of l*z = b
 		std::vector<T> x(A.size());       //this temporary matrix holds the result of u*x = z
@@ -170,17 +165,12 @@ public:
 			z[i] = (b[i] - temp) / l[i][i];
 		}
 
-		for (auto num : z)
-			std::cout << num << std::endl; //have checked z, and found it to be correct
-
-		std::cout << "size of u =" << u.size();
-		for (auto i = u.size()-1; i >= 0; i--)
+		for (auto i = int(u.size())-1; i >= 0; --i)
 		{
 			auto temp = 0.0;
-			for (auto j = u.size()-1; j > i; j--)
+			for (auto j =int(u.size()-1); j > i; j--)
 				temp += u[i][j] * x[j];
 			x[i] = (z[i] - temp) / u[i][i]; //output x is not correct
-			std::cout << "the value of x[" << i << "= " << x[i];
 		}
 
 		return x;

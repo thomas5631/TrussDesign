@@ -44,12 +44,12 @@ public:
 	{
 	}
 
-	Node node1()
+	Node node1() const
 	{
 		return nodeA;
 	}
 
-	Node node2()
+	Node node2() const
 	{
 		return nodeB;
 	}

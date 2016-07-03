@@ -1,12 +1,15 @@
 #pragma once
 #include "Node.h"
 
+enum class eType {basic, reactX, reactY};
+
 class Element
 {
 	int ID;
 	Node nodeA;
 	Node nodeB;
 	double load;
+	const eType elementType;
 
 	virtual double xLength()
 	{
@@ -28,13 +31,13 @@ class Element
 
 public:
 
-	Element(int ID, Node &node1, Node &node2):
+	Element(int ID, Node &node1, Node &node2, const eType elementType = eType::basic):
 		ID(ID),
 		nodeA(node1),
 		nodeB(node2),
-		load(0)
+		load(0),
+		elementType(elementType)
 	{
-
 	}
 
 	virtual ~Element()
@@ -51,9 +54,14 @@ public:
 		return nodeB;
 	}
 
-	int getID()
+	int getID() const
 	{
 		return ID;
+	}
+
+	eType getType() const
+	{
+		return elementType;
 	}
 
 	virtual double bucklingload()

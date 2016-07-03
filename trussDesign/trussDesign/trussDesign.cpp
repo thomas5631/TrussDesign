@@ -5,7 +5,6 @@
 #include "Node.h"
 #include "Element.h"
 #include "Solver.h"
-#include <algorithm>
 
 int main()
 {
@@ -34,41 +33,45 @@ int main()
 
 	Node node0(xPos, yPos);
 	Node nodeP(0.00, 0.00);
-	Node nodeR(2.40, 4.80);
+	Node nodeR(2.77128, 0.00);
 
-	Element elementA(nodeP, node0);
-	Element elementB(nodeR, node0);
-	Element elementC(nodeP, nodeR);
+	Element elementA('A' , nodeP, node0);
+	Element elementB('B' , nodeR, node0);
+	Element elementC('C' , nodeP, nodeR);
 
-	//std::vector<std::vector<double> > myVec = {
-	//	{ -1, -sin(PI / 3), 0, 0, 0, 0 },
-	//	{ 0, cos(PI / 3), 0, 0, 0, 0 },
-	//	{1, 0, 0, 1, 0, 0},
-	//	{0, 0, 1, 0, -1, 0},
-	//	{0, sin(PI/3), 0, 0, 0, 1},
-	//	{0, -cos(PI/3), -1, 0, 0, 0}
-	//};
-
-	//std::vector<double> forces = {
-	//	5.345, -9.258, 0, 0, 0, 0
-	//};
+	std::cout << "Element A: " << elementA.angle() * 180 / PI << std::endl;
+	std::cout << "Element B: " << elementB.angle() * 180 / PI << std::endl;
+	std::cout << "Element C: " << elementC.angle() * 180 / PI << std::endl;
 
 	std::vector<std::vector<double> > myVec = {
-		{2, 1},
-		{1, 4}
+		{ -sin(elementA.angle()), -sin(elementB.angle()), 0, 0, 0, 0 },
+		{ cos(elementA.angle()), cos(elementB.angle()), 0, 0, 0, 0 },
+		{ sin(elementA.angle()), 0, 0, 1, 0, 0 },
+		{ 0, 0, cos(elementC.angle()), 0, -1, 0 },
+		{ 0, sin(elementB.angle()), 0, 0, 0, 1 },
+		{ 0, -cos(elementB.angle()), -cos(elementC.angle()), 0, 0, 0 }
 	};
 
 	std::vector<double> forces = {
-		4, 9
+		xLoad, -yLoad, 0, 0, 0, 0
 	};
 
 	std::cout << std::endl << "input matrix: " << std::endl << std::endl;
 	Solver::output(myVec);
+	
+	std::cout << std::endl << "force matrix: " << std::endl << std::endl;
+	Solver::output(forces);
 
 	auto result = Solver::solveGaussian(myVec, forces);
 
 	std::cout << std::endl << "output matrix: " << std::endl << std::endl;
 	Solver::output(result);
+
+	elementA.force(result[0]);
+	elementB.force(result[1]);
+	elementC.force(result[2]);
+
+
 
 
 	//auto fBeam = -yLoad / element1.yLength();

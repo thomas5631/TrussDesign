@@ -3,9 +3,10 @@
 
 class Element
 {
+	const char name;
 	const Node node1;
 	const Node node2;
-	const double load;
+	double load;
 
 	virtual double length()
 	{
@@ -14,9 +15,11 @@ class Element
 
 		return sqrt(pow(x, 2) + pow(y, 2));
 	}
+
 public:
 
-	Element(Node &node1, Node &node2):
+	Element(char name, Node &node1, Node &node2):
+		name(name),
 		node1(node1),
 		node2(node2),
 		load(0)
@@ -42,6 +45,25 @@ public:
 	virtual double yLength()
 	{
 		return node1.y_pos() - node2.y_pos();
+	}
+
+	virtual double angle()
+	{
+		double angle;
+		auto xDiff = fabs(xLength());
+		auto yDiff = fabs(yLength());
+
+		angle = atan(yDiff / xDiff);
+
+		return angle;
+	}
+
+	void force(double load)
+	{
+		this->load = load;
+
+		if (load < -bucklingload())
+			std::cout << "Buckling load exceeded in element " << this->name << std::endl;
 	}
 };
 

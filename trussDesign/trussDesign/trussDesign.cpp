@@ -32,19 +32,22 @@ int main()
 	std::cout << "The y component of the load is: " << yLoad << std::endl;
 
 	Node node0(0, xPos, yPos);
-	Node nodeP(1, 0.00, 0.00);
-	Node nodeR(2, 2.77128, 0.00);
+	Node node1(1, 1.759621119, 1.756921119);
+	Node nodeP(2, 0.00, 0.00);
+	Node nodeR(3, 2.77128, 0.00);
 
-	std::vector<Node> nodeList = { node0, nodeP, nodeR };
+	std::vector<Node> nodeList = { node0, nodeP, nodeR, node1 };
 
 	Element elementA(0, nodeP, node0);
-	Element elementB(1, nodeR, node0);
-	Element elementC(2, nodeP, nodeR);
-	Element elementD(3, nodeP, nodeP, eType::reactY);
-	Element elementE(4, nodeP, nodeP, eType::reactX);
-	Element elementF(5, nodeR, nodeR, eType::reactY);
+	Element elementB(1, node1, node0);
+	Element elementC(2, node1, nodeP);
+	Element elementD(3, nodeR, nodeP);
+	Element elementE(4, node1, nodeR);
+	Element elementF(5, nodeP, nodeP, eType::reactY);
+	Element elementG(6, nodeP, nodeP, eType::reactX);
+	Element elementH(7, nodeR, nodeR, eType::reactY);
 
-	std::vector<Element> elementList = { elementA, elementB, elementC, elementD, elementE, elementF };
+	std::vector<Element> elementList = { elementA, elementB, elementC, elementD, elementE, elementF, elementG, elementH };
 
 	auto former = Former(nodeList, elementList);
 
@@ -54,7 +57,7 @@ int main()
 	Solver::output(inputVector);
 
 	std::vector<double> forces = {
-		xLoad, yLoad, 0, 0, 0, 0
+		xLoad, yLoad, 0, 0, 0, 0, 0, 0
 	};
 
 	std::cout << std::endl << "force matrix: " << std::endl << std::endl;

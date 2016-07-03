@@ -40,8 +40,11 @@ int main()
 	Element elementA(0, nodeP, node0);
 	Element elementB(1, nodeR, node0);
 	Element elementC(2, nodeP, nodeR);
+	Element elementD(3, nodeP, nodeP, eType::reactY);
+	Element elementE(4, nodeP, nodeP, eType::reactX);
+	Element elementF(5, nodeR, nodeR, eType::reactY);
 
-	std::vector<Element> elementList = { elementA, elementB, elementC };
+	std::vector<Element> elementList = { elementA, elementB, elementC, elementD, elementE, elementF };
 
 	auto former = Former(nodeList, elementList);
 
@@ -50,64 +53,21 @@ int main()
 
 	Solver::output(inputVector);
 
-	//std::cout << "Element A: " << elementA.angle() * 180 / PI << std::endl;
-	//std::cout << "Element B: " << elementB.angle() * 180 / PI << std::endl;
-	//std::cout << "Element C: " << elementC.angle() * 180 / PI << std::endl;
+	std::vector<double> forces = {
+		xLoad, yLoad, 0, 0, 0, 0
+	};
 
+	std::cout << std::endl << "force matrix: " << std::endl << std::endl;
+	Solver::output(forces);
 
-	//std::vector<std::vector<double>> inVec(nodeList.size()*2, std::vector<double>(nodeList.size()*2));    //this initializes the input vector
-	//for(auto node: nodeList)
-	//{
-	//	for(auto element: elementList)
-	//	{
-	//		if(element.node1().getID() == node.getID())
-	//		{
-	//			bool xSign = element.node2().x_pos() - element.node1().x_pos();
-	//			bool ySign = element.node2().y_pos() - element.node1().y_pos();
+	auto result = Solver::solveGaussian(inputVector, forces);
 
-	//			std::cout << "The x sign for " << node.getID() << " and element " << element.getID() << " = " << xSign << std::endl;
-	//			std::cout << "The y sign for " << node.getID() << " and element " << element.getID() << " = " << ySign << std::endl;
-	//		}
-	//		else if(element.node2().getID() == node.getID())
-	//		{
-	//			bool xSign = element.node1().x_pos() - element.node2().x_pos();
-	//			bool ySign = element.node1().y_pos() - element.node2().y_pos();
+	std::cout << std::endl << "output matrix: " << std::endl << std::endl;
+	Solver::output(result);
 
-	//			std::cout << "The x sign for " << node.getID() << " and element " << element.getID() << " = " << xSign << std::endl;
-	//			std::cout << "The y sign for " << node.getID() << " and element " << element.getID() << " = " << ySign << std::endl;
-
-	//		}
-	//	}
-	//}
-
-
-	//std::vector<std::vector<double> > myVec = {
-	//	{ -sin(elementA.angle()), -sin(elementB.angle()), 0, 0, 0, 0 },
-	//	{ cos(elementA.angle()), cos(elementB.angle()), 0, 0, 0, 0 },
-	//	{ sin(elementA.angle()), 0, 0, 1, 0, 0 },
-	//	{ 0, 0, cos(elementC.angle()), 0, -1, 0 },
-	//	{ 0, sin(elementB.angle()), 0, 0, 0, 1 },
-	//	{ 0, -cos(elementB.angle()), -cos(elementC.angle()), 0, 0, 0 }
-	//};
-
-	//std::vector<double> forces = {
-	//	xLoad, yLoad, 0, 0, 0, 0
-	//};
-
-	//std::cout << std::endl << "input matrix: " << std::endl << std::endl;
-	//Solver::output(myVec);
-	//
-	//std::cout << std::endl << "force matrix: " << std::endl << std::endl;
-	//Solver::output(forces);
-
-	//auto result = Solver::solveGaussian(myVec, forces);
-
-	//std::cout << std::endl << "output matrix: " << std::endl << std::endl;
-	//Solver::output(result);
-
-	//elementA.force(result[0]);
-	//elementB.force(result[1]);
-	//elementC.force(result[2]);
+	elementA.force(result[0]);
+	elementB.force(result[1]);
+	elementC.force(result[2]);
 
 	getchar();
 	return 0;

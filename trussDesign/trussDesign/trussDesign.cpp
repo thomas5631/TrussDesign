@@ -4,7 +4,9 @@
 #include "stdafx.h"
 #include "Node.h"
 #include "Element.h"
+#include "Former.h"
 #include "Solver.h"
+
 
 int main()
 {
@@ -17,7 +19,6 @@ int main()
 	//auto load = plugA*pressure;
 	auto load = 10.69E3;;
 
-
 	std::cout << "The total load is: " << load << std::endl;
 
 	auto angle = PI / 6;        //Angle from x-axis representation
@@ -25,67 +26,88 @@ int main()
 	auto xPos = 0.00;
 	auto yPos = 4.80;
 	auto xLoad = load*sin(angle);
-	auto yLoad = load*cos(angle);
+	auto yLoad = -load*cos(angle);
 
 	std::cout << "The x component of the load is: " << xLoad << std::endl;
 	std::cout << "The y component of the load is: " << yLoad << std::endl;
 
+	Node node0(0, xPos, yPos);
+	Node nodeP(1, 0.00, 0.00);
+	Node nodeR(2, 2.77128, 0.00);
 
-	Node node0(xPos, yPos);
-	Node nodeP(0.00, 0.00);
-	Node nodeR(2.77128, 0.00);
+	std::vector<Node> nodeList = { node0, nodeP, nodeR };
 
-	Element elementA('A' , nodeP, node0);
-	Element elementB('B' , nodeR, node0);
-	Element elementC('C' , nodeP, nodeR);
+	Element elementA(0, nodeP, node0);
+	Element elementB(1, nodeR, node0);
+	Element elementC(2, nodeP, nodeR);
 
-	std::cout << "Element A: " << elementA.angle() * 180 / PI << std::endl;
-	std::cout << "Element B: " << elementB.angle() * 180 / PI << std::endl;
-	std::cout << "Element C: " << elementC.angle() * 180 / PI << std::endl;
+	std::vector<Element> elementList = { elementA, elementB, elementC };
 
-	std::vector<std::vector<double> > myVec = {
-		{ -sin(elementA.angle()), -sin(elementB.angle()), 0, 0, 0, 0 },
-		{ cos(elementA.angle()), cos(elementB.angle()), 0, 0, 0, 0 },
-		{ sin(elementA.angle()), 0, 0, 1, 0, 0 },
-		{ 0, 0, cos(elementC.angle()), 0, -1, 0 },
-		{ 0, sin(elementB.angle()), 0, 0, 0, 1 },
-		{ 0, -cos(elementB.angle()), -cos(elementC.angle()), 0, 0, 0 }
-	};
-
-	std::vector<double> forces = {
-		xLoad, -yLoad, 0, 0, 0, 0
-	};
+	auto former = Former(nodeList, elementList);
 
 	std::cout << std::endl << "input matrix: " << std::endl << std::endl;
-	Solver::output(myVec);
-	
-	std::cout << std::endl << "force matrix: " << std::endl << std::endl;
-	Solver::output(forces);
+	auto inputVector = former.inputVec();
 
-	auto result = Solver::solveGaussian(myVec, forces);
+	Solver::output(inputVector);
 
-	std::cout << std::endl << "output matrix: " << std::endl << std::endl;
-	Solver::output(result);
-
-	elementA.force(result[0]);
-	elementB.force(result[1]);
-	elementC.force(result[2]);
+	//std::cout << "Element A: " << elementA.angle() * 180 / PI << std::endl;
+	//std::cout << "Element B: " << elementB.angle() * 180 / PI << std::endl;
+	//std::cout << "Element C: " << elementC.angle() * 180 / PI << std::endl;
 
 
+	//std::vector<std::vector<double>> inVec(nodeList.size()*2, std::vector<double>(nodeList.size()*2));    //this initializes the input vector
+	//for(auto node: nodeList)
+	//{
+	//	for(auto element: elementList)
+	//	{
+	//		if(element.node1().getID() == node.getID())
+	//		{
+	//			bool xSign = element.node2().x_pos() - element.node1().x_pos();
+	//			bool ySign = element.node2().y_pos() - element.node1().y_pos();
+
+	//			std::cout << "The x sign for " << node.getID() << " and element " << element.getID() << " = " << xSign << std::endl;
+	//			std::cout << "The y sign for " << node.getID() << " and element " << element.getID() << " = " << ySign << std::endl;
+	//		}
+	//		else if(element.node2().getID() == node.getID())
+	//		{
+	//			bool xSign = element.node1().x_pos() - element.node2().x_pos();
+	//			bool ySign = element.node1().y_pos() - element.node2().y_pos();
+
+	//			std::cout << "The x sign for " << node.getID() << " and element " << element.getID() << " = " << xSign << std::endl;
+	//			std::cout << "The y sign for " << node.getID() << " and element " << element.getID() << " = " << ySign << std::endl;
+
+	//		}
+	//	}
+	//}
 
 
-	//auto fBeam = -yLoad / element1.yLength();
-	//auto fBeam2 = -xLoad / element1.xLength();
+	//std::vector<std::vector<double> > myVec = {
+	//	{ -sin(elementA.angle()), -sin(elementB.angle()), 0, 0, 0, 0 },
+	//	{ cos(elementA.angle()), cos(elementB.angle()), 0, 0, 0, 0 },
+	//	{ sin(elementA.angle()), 0, 0, 1, 0, 0 },
+	//	{ 0, 0, cos(elementC.angle()), 0, -1, 0 },
+	//	{ 0, sin(elementB.angle()), 0, 0, 0, 1 },
+	//	{ 0, -cos(elementB.angle()), -cos(elementC.angle()), 0, 0, 0 }
+	//};
 
-	//std::cout << "The xBeam calc yields: " << fBeam << std::endl;
-	//std::cout << "The yBeam calc yields: " << fBeam2 << std::endl;
+	//std::vector<double> forces = {
+	//	xLoad, yLoad, 0, 0, 0, 0
+	//};
 
-	//auto buckingLoad = element1.bucklingload();
+	//std::cout << std::endl << "input matrix: " << std::endl << std::endl;
+	//Solver::output(myVec);
+	//
+	//std::cout << std::endl << "force matrix: " << std::endl << std::endl;
+	//Solver::output(forces);
 
-	//std::cout << "The bucking load of this beam is: " << buckingLoad << std::endl;
+	//auto result = Solver::solveGaussian(myVec, forces);
 
+	//std::cout << std::endl << "output matrix: " << std::endl << std::endl;
+	//Solver::output(result);
 
-	
+	//elementA.force(result[0]);
+	//elementB.force(result[1]);
+	//elementC.force(result[2]);
 
 	getchar();
 	return 0;

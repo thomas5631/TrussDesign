@@ -3,10 +3,20 @@
 
 class Element
 {
-	const char name;
-	const Node node1;
-	const Node node2;
+	int ID;
+	Node nodeA;
+	Node nodeB;
 	double load;
+
+	virtual double xLength()
+	{
+		return nodeA.x_pos() - nodeB.x_pos();;
+	}
+
+	virtual double yLength()
+	{
+		return nodeA.y_pos() - nodeB.y_pos();
+	}
 
 	virtual double length()
 	{
@@ -18,10 +28,10 @@ class Element
 
 public:
 
-	Element(char name, Node &node1, Node &node2):
-		name(name),
-		node1(node1),
-		node2(node2),
+	Element(int ID, Node &node1, Node &node2):
+		ID(ID),
+		nodeA(node1),
+		nodeB(node2),
 		load(0)
 	{
 
@@ -31,20 +41,25 @@ public:
 	{
 	}
 
+	Node node1()
+	{
+		return nodeA;
+	}
+
+	Node node2()
+	{
+		return nodeB;
+	}
+
+	int getID()
+	{
+		return ID;
+	}
+
 	virtual double bucklingload()
 		//returns the buckling load of the element. This cannot be exceeded.
 	{
 		return (IMPERFECTION*pow(PI, 2)*MODULUS*SECONDMOMENT) / (pow(1000* length(), 2));
-	}
-
-	virtual double xLength()
-	{
-		return node1.x_pos() - node2.x_pos();;
-	}
-
-	virtual double yLength()
-	{
-		return node1.y_pos() - node2.y_pos();
 	}
 
 	virtual double angle()
@@ -63,7 +78,7 @@ public:
 		this->load = load;
 
 		if (load < -bucklingload())
-			std::cout << "Buckling load exceeded in element " << this->name << std::endl;
+			std::cout << "Buckling load exceeded in element " << this->ID << std::endl;
 	}
 };
 

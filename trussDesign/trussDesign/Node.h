@@ -1,11 +1,15 @@
 #pragma once
 class Node
 {
+	int ID;
 	const double xPos;
 	const double yPos;
+
 public:
-	Node(const double x_pos, const double y_pos)
-		: xPos{ x_pos },
+	Node(int ID, const double x_pos, const double y_pos)
+		:
+		ID(ID),
+		xPos{ x_pos },
 		yPos{ y_pos }
 	{
 	}
@@ -13,6 +17,11 @@ public:
 	virtual ~Node()
 	{
 	};
+
+	virtual int getID()
+	{
+		return ID;
+	}
 
 	virtual double x_pos() const
 	{
@@ -23,5 +32,6 @@ public:
 	{
 		return yPos;
 	}
+
 };
 

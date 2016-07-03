@@ -3,7 +3,6 @@
 #include "Node.h"
 #include "Element.h"
 #include <vector>
-#include <iostream>
 
 class Former
 {
@@ -36,40 +35,45 @@ public:
 		{
 			for (auto element : elementList)
 			{
-				if (element.node1().getID() == node.getID())
+				if(element.getType() == eType::basic)
 				{
-					int xSign = sgn(element.node2().x_pos() - element.node1().x_pos());
-					int ySign = sgn(element.node2().y_pos() - element.node1().y_pos());
+					auto xSign = 0;
+					auto ySign = 0;
 
-					int yLocA = 2 * node.getID();
-					int xLocA = 2 * node.getID() + 1;
-					int yLocB = element.getID();
-					int xLocB = element.getID();
+					if (element.node1().getID() == node.getID())
+					{
+						xSign = sgn(element.node2().x_pos() - element.node1().x_pos());
+						ySign = sgn(element.node2().y_pos() - element.node1().y_pos());
+					}
+					else if (element.node2().getID() == node.getID())
+					{
+						xSign = sgn(element.node1().x_pos() - element.node2().x_pos());
+						ySign = sgn(element.node1().y_pos() - element.node2().y_pos());
+					}
 
-					inVec[xLocA][xLocB] = xSign*cos(element.angle());
-					inVec[yLocA][yLocB] = ySign*sin(element.angle());
-
-					//std::cout << "The x sign for " << node.getID() << " and element " << element.getID() << " = " << xSign << std::endl;
-					//std::cout << "The y sign for " << node.getID() << " and element " << element.getID() << " = " << ySign << std::endl;
+					inVec[2 * node.getID()][element.getID()] = ySign*sin(element.angle());
+					inVec[2 * node.getID() + 1][element.getID()] = xSign*cos(element.angle());
 				}
-				else if (element.node2().getID() == node.getID())
+
+				else if (element.getType() == eType::reactY)
 				{
-					int xSign = sgn(element.node1().x_pos() - element.node2().x_pos());
-					int ySign = sgn(element.node1().y_pos() - element.node2().y_pos());
-
-					int yLocA = 2 * node.getID();
-					int xLocA = 2 * node.getID() + 1;
-					int yLocB = element.getID();
-					int xLocB = element.getID();
-
-					inVec[xLocA][xLocB] = xSign*cos(element.angle());
-					inVec[yLocA][yLocB] = ySign*sin(element.angle());
-
-					//std::cout << "The x sign for " << node.getID() << " and element " << element.getID() << " = " << xSign << std::endl;
-					//std::cout << "The y sign for " << node.getID() << " and element " << element.getID() << " = " << ySign << std::endl;
-
+					if (element.node1().getID() == node.getID())
+					{
+						inVec[2 * node.getID()][element.getID()] = 1;
+					}
 				}
+
+				else if (element.getType() == eType::reactX)
+				{
+					if (element.node1().getID() == node.getID())
+					{
+						inVec[2 * node.getID() + 1][element.getID()] = -1; //axis convention -x, +y for pin forces 
+					}
+				}
+				
 			}
+
+
 		}
 		return inVec;
 	}
